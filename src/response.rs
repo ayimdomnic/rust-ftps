@@ -68,7 +68,7 @@ impl FtpResponse {
         if parts.len() < 2 {
             return Err("Invalid response format".into());
         }
-        
+
         let code = parts[0].parse()?;
         let message = parts[1].to_string();
 

@@ -16,8 +16,6 @@ pub enum FtpCommand {
     ///
     /// * `Pass(String)` - Contains the password to be sent to the FTP server.
     Pass(String),
-
-    // Add additional FTP commands as needed.
 }
 
 impl FtpCommand {
@@ -44,8 +42,6 @@ impl FtpCommand {
         match self {
             FtpCommand::User(username) => format!("USER {}\r\n", username),
             FtpCommand::Pass(password) => format!("PASS {}\r\n", password),
-
-            // Handle any additional commands here.
         }
     }
 }
