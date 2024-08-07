@@ -1,0 +1,46 @@
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "**.rs"
+      - Cargo.toml
+      - Cargo.lock
+      - .github/workflows/ctest.yml
+  pull_request:
+    paths:
+      - "**.rs"
+      - Cargo.toml
+      - Cargo.lock
+      - .github/workflows/test.yml
+  workflow_dispatch:
+permissions: read-all
+name: cargo test
+jobs:
+  cargotest:
+    name: cargo test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - uses: taiki-e/install-action@cargo-llvm-cov
+      - uses: taiki-e/install-action@nextest
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libudev-dev
+        shell: bash
+      - name: cargo test
+        shell: bash
+        run: |
+          cargo llvm-cov nextest --all --lcov --output-path lcov.info --test-threads=1 --no-fail-fast
+      - name: Upload to codecov.io
+        uses: codecov/codecov-action@v4.5.0
+        with:
+          slug: KittyCAD/machine-api
+          token: ${{secrets.CODECOV_TOKEN}}
+          fail_ci_if_error: true
+          flags: unittests
+          verbose: true
+          files: lcov.info
